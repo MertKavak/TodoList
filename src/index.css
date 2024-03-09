@@ -1,0 +1,74 @@
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  font-size: 1.6rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  background-color: #fbf9f8;
+}
+
+#root {
+  height: 100%;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+}
+
+h1 {
+  font-size: 3rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.todo-card {
+  background: #255867;
+  padding: 3rem;
+  width:60rem;
+  margin-top: 2rem;
+  min-height: 35vh;
+  box-shadow: 0rem 0.5rem 0.7rem rgb(70, 143, 145);
+  border-radius: 1rem;
+
+}
+
+.todo-input {
+  color: white;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 0.1rem solid gray;
+}
+
+
+.list-item {
+  background-color: #2b6384;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem 1rem 2rem ;
+  margin-bottom: 1rem;
+  box-shadow: 0 0.3rem 0.5rem  rgb(45, 42, 42);
+}
+
+.icon {
+  font-size: 3rem;
+  cursor: pointer;
+
+}
+
+.check-icon {
+  font-size: 2.5rem;
+  margin-left: 0.5rem;
+  color: rgb(0, 230, 122);
+  cursor: pointer;
+}
