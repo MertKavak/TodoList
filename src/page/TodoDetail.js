@@ -1,70 +1,70 @@
 import React from "react";
-import { Box, Button, Container, Input, Select, Text } from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
+import { listItem_Delete, listItem_Update } from "../actions/todolistActions";
+import { useNavigate, useParams } from "react-router-dom";
+import { Box, Button, Input, Select, Text } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useDispatch } from "react-redux";
-import { listItem_Add } from "../actions/todolistActions";
 import cities from "../data";
-import { v4 as uuidv4 } from "uuid";
 
-function TodoList() {
+function TodoDetail() {
+  const { id } = useParams();
+  console.log(id);
   const distpatch = useDispatch();
-
+  const userListItem = useSelector((state) => state.userTodoList.userListItem);
+  const selectedTodo = userListItem.find((todo) => todo.id === id);
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
-      newTitle: "",
-      name: "",
-      gender: [],
-      cityname: "",
-      districtName: "",
+      newTitle: selectedTodo ? selectedTodo.title : "",
+      name: selectedTodo ? selectedTodo.name : "",
+      gender: selectedTodo ? selectedTodo.gender : "",
+      cityname: selectedTodo ? selectedTodo.cityname : "",
+      districtName: selectedTodo ? selectedTodo.districtName : "",
     },
     validationSchema: Yup.object({
       newTitle: Yup.string().required("Bu alan boş bırakılamaz"),
       name: Yup.string().required("Bu alan boş bırakılamaz"),
     }),
-    onSubmit: (values, { resetForm }) => {
+    onSubmit: (values) => {
       const date = new Date();
 
-      if (values.newTitle) {
-        const id = uuidv4();
+      if (selectedTodo) {
         distpatch(
-          listItem_Add(
-            id,
-            values.newTitle,
-            values.name,
+          listItem_Update(selectedTodo.id, {
+            title: values.newTitle,
+            name: values.name,
             date,
-            values.gender,
-            values.cityname,
-            values.districtName
-          )
+            gender: values.gender,
+            cityname: values.cityname,
+            districtName: values.districtName,
+          })
         );
-        console.log(
-          values.gender,
-          values.newTitle,
-          values.cityname,
-          values.districtName
-        );
-        resetForm();
       }
     },
   });
 
+  const deleteTodo = () => {
+    distpatch(listItem_Delete(selectedTodo.id));
+    navigate("/");
+  };
+
+  if (!selectedTodo) {
+    return <div style={{ marginTop: "5rem" }}>Görev bulunamadı.</div>;
+  }
   return (
-    <>
-      <Container className="todo-card">
-        <Box>
-          <h1>Görev Tanımla</h1>
-          <h5>Şehir Seçiniz:</h5>
-        </Box>
+    <div className="todo-card">
+      <div>
+        <h1>Görevi Düzenle</h1>
         <form onSubmit={formik.handleSubmit}>
           <div>
             <Select
-             
               fontSize="1.7rem"
               mb="1rem"
               size="lg"
               onChange={(e) => formik.setFieldValue("cityname", e.target.value)}
+              defaultValue={formik.values.cityname}
             >
               {cities.city.map((city) => (
                 <option key={city._id} value={city.name}>
@@ -75,13 +75,13 @@ function TodoList() {
           </div>
           <h5>İlçe Seçiniz:</h5>
           <Select
-          
-          fontSize="1.7rem"
-          mb="1rem"
-          size="lg"
+            fontSize="1.7rem"
+            mb="1rem"
+            size="lg"
             onChange={(e) =>
               formik.setFieldValue("districtName", e.target.value)
             }
+            defaultValue={formik.values.districtName}
           >
             {formik.values.cityname &&
               cities.city
@@ -105,7 +105,7 @@ function TodoList() {
                   mb="1rem"
                   type="text"
                   name="newTitle"
-                  value={formik.values.newTitle}
+                  defaultValue={formik.values.newTitle}
                   onChange={formik.handleChange}
                   placeholder="Yapılacakları buraya girin..."
                 />
@@ -122,6 +122,7 @@ function TodoList() {
               </div>
               <label>Ad Soyad:</label>
               <Input
+                defaultValue={formik.values.name}
                 border={formik.errors.name && "0.2rem solid #ff3c3c"}
                 padding="1.5rem"
                 fontSize="1.5rem"
@@ -129,7 +130,6 @@ function TodoList() {
                 mb="1rem"
                 type="text"
                 name="name"
-                value={formik.values.name}
                 onChange={formik.handleChange}
                 placeholder="Ad soyad Giriniz..."
               />
@@ -176,14 +176,25 @@ function TodoList() {
                 w="100%"
                 fontSize="1.5rem"
               >
-                Ekle
+                Düzenle
+              </Button>
+              <Button
+                type="button"
+                colorScheme="red"
+                mt="1rem"
+                p="1.6rem"
+                w="100%"
+                fontSize="1.5rem"
+                onClick={deleteTodo}
+              >
+                Sil
               </Button>
             </div>
           </Box>
         </form>
-      </Container>
-    </>
+      </div>
+    </div>
   );
 }
 
-export default TodoList;
+export default TodoDetail;
